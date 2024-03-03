@@ -5,7 +5,7 @@ from random import choice
 WIDTH = 1202
 HEIGHT = 902
 SIZE = [WIDTH, HEIGHT]
-SQUARE_SIZE = 50
+SQUARE_SIZE = 100
 columns = WIDTH // SQUARE_SIZE
 rows = HEIGHT // SQUARE_SIZE
 pg.init()
@@ -108,7 +108,10 @@ while running:
     next_c = cell_now.go()
     if next_c:
         next_c.visited = True
+        queue.append(cell_now)
         passage(cell_now, next_c)
         cell_now = next_c
+    elif queue:
+        cell_now = queue.pop()
     pg.display.flip()
-    time.tick(30)
+    time.tick(10)
