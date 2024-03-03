@@ -43,6 +43,29 @@ class Cell:
             pg.draw.line(screen, 'black', [x, y + SQUARE_SIZE], [x, y], 2)
 
 
+    def check(self, x, y):
+        if x < 0 or x > columns - 1 or y < 0 or y > rows - 1:
+            return False
+        return grid[x + y * columns]
+
+    def go(self):
+        nei  = []
+        top = self.check(self.x, self.y - 1)
+        right = self.check(self.x + 1, self.y)
+        bottom = self.check(self.x, self.y + 1)
+        left = self.check(self.x - 1, self.y)
+        if top and not top.visited:
+            nei.append(top)
+        if right and not right.visited:
+            nei.append(right)
+        if bottom and not bottom.visited:
+            nei.append(bottom)
+        if left and not left.visited:
+            nei.append(left)
+        if len(nei) == 0:
+            return False
+        return choice(nei)
+
 grid = []
 for i in range(rows):
     for j in range(columns):
@@ -59,6 +82,11 @@ while running:
             running = False
     for c in grid:
         c.draw_lines_and_cell()
-
+    cell_now.visited = 1
+    cell_now.fill_current()
+    next_c = cell_now.go()
+    if next_c:
+        next_c.visited = True
+        cell_now = next_c
     pg.display.flip()
     time.tick(30)
