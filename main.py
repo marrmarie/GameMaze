@@ -8,10 +8,22 @@ SIZE = [WIDTH, HEIGHT]
 SQUARE_SIZE = 100
 columns = WIDTH // SQUARE_SIZE
 rows = HEIGHT // SQUARE_SIZE
+
+
+
 pg.init()
+
+
 screen = pg.display.set_mode(SIZE)
 time = pg.time.Clock()
 
+
+all_sprites = pg.sprite.Group()
+hero_image = pg.image.load("cub.png")
+hero = pg.sprite.Sprite(all_sprites)
+hero.image = hero_image
+hero.rect = hero.image.get_rect()
+all_sprites.add(hero)
 
 class Cell:
     def __init__(self, x, y):
@@ -25,7 +37,6 @@ class Cell:
         f1 = self.x * SQUARE_SIZE
         f2 = self.y * SQUARE_SIZE
         pg.draw.rect(screen, 'black', [f1 + 2, f2 + 2, SQUARE_SIZE - 2, SQUARE_SIZE - 2])
-
     def draw_lines_and_cell(self):
         x = self.x * SQUARE_SIZE
         y = self.y * SQUARE_SIZE
@@ -95,12 +106,27 @@ cell_now = grid[0]
 
 queue = deque()
 running = True
+loc_x = 0
+loc_y = 0
 while running:
     screen.fill(pg.Color('pink'))
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
             exit()
+
+        key = pg.key.get_pressed()
+        if event.type == pg.KEYUP:
+            print(0)
+            f = event.key
+            if event.key == 273:
+                loc_y -= 10
+            if event.key == 274:
+                loc_y += 10
+            if event.key == 275:
+                loc_x += 10
+            if event.key == 276:
+                loc_x -= 10
     for c in grid:
         c.draw_lines_and_cell()
     cell_now.visited = 1
@@ -113,5 +139,7 @@ while running:
         cell_now = next_c
     elif queue:
         cell_now = queue.pop()
+    # screen.blit(surf, hero, (loc_x, loc_y))
+    all_sprites.draw(screen)
     pg.display.flip()
-    time.tick(10)
+    time.tick(100)
