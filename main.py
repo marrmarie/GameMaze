@@ -1,6 +1,7 @@
 import pygame as pg
 from collections import deque
 from random import choice
+from ball import Ball
 
 WIDTH = 1202
 HEIGHT = 902
@@ -16,14 +17,9 @@ pg.init()
 
 screen = pg.display.set_mode(SIZE)
 time = pg.time.Clock()
+cub = Ball(0, 'cub.png')
 
 
-all_sprites = pg.sprite.Group()
-hero_image = pg.image.load("cub.png")
-hero = pg.sprite.Sprite(all_sprites)
-hero.image = hero_image
-hero.rect = hero.image.get_rect()
-all_sprites.add(hero)
 
 class Cell:
     def __init__(self, x, y):
@@ -117,16 +113,15 @@ while running:
 
         key = pg.key.get_pressed()
         if event.type == pg.KEYUP:
-            print(0)
             f = event.key
             if event.key == 273:
-                loc_y -= 10
+                cub.rect.y -= 10
             if event.key == 274:
-                loc_y += 10
+                cub.rect.y += 10
             if event.key == 275:
-                loc_x += 10
+                cub.rect.x += 10
             if event.key == 276:
-                loc_x -= 10
+                cub.rect.x -= 10
     for c in grid:
         c.draw_lines_and_cell()
     cell_now.visited = 1
@@ -139,7 +134,11 @@ while running:
         cell_now = next_c
     elif queue:
         cell_now = queue.pop()
-    # screen.blit(surf, hero, (loc_x, loc_y))
-    all_sprites.draw(screen)
+    screen.blit(cub.image, cub.rect)
     pg.display.flip()
+
+    # if cub.rect.y < HEIGHT - 20:
+    #     cub.rect.y += 1
+    # else:
+    #     cub.rect.y = 0
     time.tick(100)
