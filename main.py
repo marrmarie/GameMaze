@@ -5,7 +5,7 @@ from random import choice
 WIDTH = 1202
 HEIGHT = 802
 SIZE = [WIDTH, HEIGHT]
-SQUARE_SIZE = 300
+SQUARE_SIZE = 100
 columns = WIDTH // SQUARE_SIZE
 rows = HEIGHT // SQUARE_SIZE
 
@@ -18,7 +18,7 @@ time = pg.time.Clock()
 x = 0
 y = 0
 
-lab = [[[] for i in range(columns)] for j in range(rows)]
+
 
 class Cell:
     def __init__(self, x, y):
@@ -40,39 +40,22 @@ class Cell:
         if self.visited:
             pg.draw.rect(screen, 'green', (x, y, SQUARE_SIZE, SQUARE_SIZE))
 
-        x1 = self.x // SQUARE_SIZE
-        y1 = self.y // SQUARE_SIZE
+
         if self.walls[0]:
             pg.draw.line(screen, 'black', [x, y], [x + SQUARE_SIZE, y], 3)
-        # else:
-        #     if 0 not in lab[x1][y1]:
-        #         lab[x1][y1].append(0)
-        #     if 2 not in lab[x1][y1 - 1]:
-        #         lab[x1][y1 - 1].append(2)
+
 
         if self.walls[1]:
             pg.draw.line(screen, 'black', [x + SQUARE_SIZE, y], [x + SQUARE_SIZE, y + SQUARE_SIZE], 3)
-        # else:
-        #     if 1 not in lab[x1][y1]:
-        #         lab[x1][y1].append(1)
-        #     if 3 not in lab[x1 + 1][y1]:
-        #         lab[x1 + 1][y1].append(3)
+
 
         if self.walls[2]:
             pg.draw.line(screen, 'black', [x + SQUARE_SIZE, y + SQUARE_SIZE], [x, y + SQUARE_SIZE], 3)
-        # else:
-        #     if 2 not in lab[x1][y1]:
-        #         lab[x1][y1].append(2)
-        #     if 0 not in lab[x1][y1 + 1]:
-        #         lab[x1][y1 + 1].append(0)
+
 
         if self.walls[3]:
             pg.draw.line(screen, 'black', [x, y + SQUARE_SIZE], [x, y], 3)
-        # else:
-        #     if 3 not in lab[x1][y1]:
-        #         lab[x1][y1].append(3)
-        #     if 1 not in lab[x1 - 1][y1]:
-        #         lab[x1 - 1][y1].append(1)
+
 
     def check(self, x, y):
         ind = lambda x, y: x + y * columns
@@ -101,7 +84,6 @@ class Cell:
 
 
 def passage(now, next):
-    global lab
     x1 = now.x - next.x
     xx = now.x // SQUARE_SIZE
     yy = now.y // SQUARE_SIZE
@@ -109,38 +91,22 @@ def passage(now, next):
     if x1 == 1:
         now.walls[3] = False
         next.walls[1] = False
-    # else:
-    #     if 3 not in lab[xx][yy]:
-    #         lab[xx][yy].append(3)
-    #     if 1 not in lab[xx - 1][yy]:
-    #         lab[xx - 1][yy].append(1)
+
 
     if x1 == -1:
         now.walls[1] = False
         next.walls[3] = False
-    # else:
-    #     if 1 not in lab[xx][yy]:
-    #         lab[xx][yy].append(1)
-    #     if 3 not in lab[xx + 1][yy]:
-    #         lab[xx + 1][yy].append(3)
+
 
     y1 = now.y - next.y
     if y1 == 1:
         now.walls[0] = False
         next.walls[2] = False
-    # else:
-    #     if 0 not in lab[xx][yy]:
-    #         lab[xx][yy].append(0)
-    #     if 2 not in lab[xx][yy - 1]:
-    #         lab[xx][yy - 1].append(2)
+
     if y1 == -1:
         now.walls[2] = False
         next.walls[0] = False
-    # else:
-    #     if 2 not in lab[xx][yy]:
-    #         lab[xx][yy].append(2)
-    #     if 0 not in lab[xx][yy + 1]:
-    #         lab[xx][yy + 1].append(0)
+
 
 
 
@@ -161,8 +127,7 @@ while running:
         if i.type == pg.QUIT:
             exit()
         elif i.type == pg.KEYDOWN:
-            for j in range(len(lab)):
-                print(*lab[j])
+
             q = grid[(x // SQUARE_SIZE) + (y // SQUARE_SIZE) * columns]
             if i.key == pg.K_LEFT and x - SQUARE_SIZE >= 0 and not q.walls[3]:
                 x -= SQUARE_SIZE
