@@ -1,10 +1,9 @@
 import pygame as pg
 from collections import deque
 from random import choice
-from ball import Ball
 
 WIDTH = 1202
-HEIGHT = 902
+HEIGHT = 802
 SIZE = [WIDTH, HEIGHT]
 SQUARE_SIZE = 100
 columns = WIDTH // SQUARE_SIZE
@@ -17,8 +16,8 @@ pg.init()
 
 screen = pg.display.set_mode(SIZE)
 time = pg.time.Clock()
-cub = Ball(0, 'cub.png')
-
+x = 0
+y = 0
 
 
 class Cell:
@@ -27,12 +26,13 @@ class Cell:
         self.y = y
         # top, right, bottom, left
         self.walls = [True, True, True, True]
-        self.visited = False  # посещена клетка или нет
+        self.visited = False
 
     def fill_current(self):
         f1 = self.x * SQUARE_SIZE
         f2 = self.y * SQUARE_SIZE
         pg.draw.rect(screen, 'black', [f1 + 2, f2 + 2, SQUARE_SIZE - 2, SQUARE_SIZE - 2])
+
     def draw_lines_and_cell(self):
         x = self.x * SQUARE_SIZE
         y = self.y * SQUARE_SIZE
@@ -74,6 +74,7 @@ class Cell:
             return False
         return choice(nei)
 
+
 def passage(now, next):
     x1 = now.x - next.x
     if x1 == 1:
@@ -91,8 +92,6 @@ def passage(now, next):
         next.walls[0] = False
 
 
-
-#grid = [Cell(col, row) for row in range(rows) for col in range(columns)]
 grid = []
 for row in range(rows):
     for col in range(columns):
@@ -107,21 +106,18 @@ loc_y = 0
 while running:
     screen.fill(pg.Color('pink'))
 
-    for event in pg.event.get():
-        if event.type == pg.QUIT:
+    for i in pg.event.get():
+        if i.type == pg.QUIT:
             exit()
-
-        key = pg.key.get_pressed()
-        if event.type == pg.KEYUP:
-            f = event.key
-            if event.key == 273:
-                cub.rect.y -= 10
-            if event.key == 274:
-                cub.rect.y += 10
-            if event.key == 275:
-                cub.rect.x += 10
-            if event.key == 276:
-                cub.rect.x -= 10
+        elif i.type == pg.KEYDOWN:
+            if i.key == pg.K_LEFT and x - 100 >= 0:
+                x -= 100
+            elif i.key == pg.K_RIGHT and x + 200 <= WIDTH:
+                x += 100
+            elif i.key == pg.K_UP and y - 100 >= 0:
+                y -= 100
+            elif i.key == pg.K_DOWN and y + 200 <= HEIGHT:
+                y += 100
     for c in grid:
         c.draw_lines_and_cell()
     cell_now.visited = 1
@@ -134,11 +130,7 @@ while running:
         cell_now = next_c
     elif queue:
         cell_now = queue.pop()
-    screen.blit(cub.image, cub.rect)
+    pg.draw.rect(screen, 'black', (x + 5, y + 5, 90, 90))
     pg.display.flip()
 
-    # if cub.rect.y < HEIGHT - 20:
-    #     cub.rect.y += 1
-    # else:
-    #     cub.rect.y = 0
     time.tick(100)
