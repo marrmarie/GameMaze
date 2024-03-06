@@ -5,10 +5,9 @@ from random import choice
 WIDTH = 1202
 HEIGHT = 802
 SIZE = [WIDTH, HEIGHT]
-SQUARE_SIZE = 100
+SQUARE_SIZE = 300
 columns = WIDTH // SQUARE_SIZE
 rows = HEIGHT // SQUARE_SIZE
-
 
 
 pg.init()
@@ -72,6 +71,7 @@ class Cell:
             nei.append(left)
         if len(nei) == 0:
             return False
+
         return choice(nei)
 
 
@@ -92,6 +92,9 @@ def passage(now, next):
         next.walls[0] = False
 
 
+
+
+
 grid = []
 for row in range(rows):
     for col in range(columns):
@@ -110,17 +113,17 @@ while running:
         if i.type == pg.QUIT:
             exit()
         elif i.type == pg.KEYDOWN:
-            if i.key == pg.K_LEFT and x - 100 >= 0:
-                x -= 100
-            elif i.key == pg.K_RIGHT and x + 200 <= WIDTH:
-                x += 100
-            elif i.key == pg.K_UP and y - 100 >= 0:
-                y -= 100
-            elif i.key == pg.K_DOWN and y + 200 <= HEIGHT:
-                y += 100
+            if i.key == pg.K_LEFT and x - SQUARE_SIZE >= 0:
+                x -= SQUARE_SIZE
+            elif i.key == pg.K_RIGHT and x + SQUARE_SIZE * 2 <= WIDTH:
+                x += SQUARE_SIZE
+            elif i.key == pg.K_UP and y - SQUARE_SIZE >= 0:
+                y -= SQUARE_SIZE
+            elif i.key == pg.K_DOWN and y + SQUARE_SIZE * 2 <= HEIGHT:
+                y += SQUARE_SIZE
     for c in grid:
         c.draw_lines_and_cell()
-    cell_now.visited = 1
+    cell_now.visited = True
     cell_now.fill_current()
     next_c = cell_now.go()
     if next_c:
@@ -130,7 +133,6 @@ while running:
         cell_now = next_c
     elif queue:
         cell_now = queue.pop()
-    pg.draw.rect(screen, 'black', (x + 5, y + 5, 90, 90))
+    pg.draw.rect(screen, 'black', (x + SQUARE_SIZE * 0.05, y + SQUARE_SIZE * 0.05, SQUARE_SIZE * 0.9, SQUARE_SIZE * 0.9))
     pg.display.flip()
-
-    time.tick(100)
+    time.tick(10)
