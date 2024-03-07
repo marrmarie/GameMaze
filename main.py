@@ -3,7 +3,7 @@ from collections import deque
 from random import choice
 
 WIDTH = 1200
-HEIGHT = 800
+HEIGHT = 750
 SIZE = [WIDTH, HEIGHT]
 square_size = 50
 columns = WIDTH // square_size
@@ -16,7 +16,6 @@ screen = pg.display.set_mode(SIZE)
 time = pg.time.Clock()
 x = 0
 y = 0
-
 
 class Cell:
     def __init__(self, x, y):
@@ -76,6 +75,7 @@ class Cell:
         return choice(nei)
 
 
+
 def passage(now, next):
     x1 = now.x - next.x
     xx = now.x // square_size
@@ -133,7 +133,6 @@ while running:
                         final_input = int(usertext)
                         game = True
                         square_size = sizes[final_input]
-                        print(square_size)
                         columns = WIDTH // square_size
                         rows = HEIGHT // square_size
             else:
@@ -175,6 +174,8 @@ while running:
         elif queue:
             cell_now = queue.pop()
         pg.draw.rect(screen, 'green', (2, 2, square_size - 2, square_size - 2))
+        pg.draw.rect(screen, 'red', (
+            (columns - 1) * square_size + 10, (rows - 1) * square_size + 10, square_size - 20, square_size - 20))
         pg.draw.rect(screen, 'black',
                      (x + square_size * 0.05, y + square_size * 0.05, square_size * 0.9, square_size * 0.9))
 
