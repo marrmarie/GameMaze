@@ -9,6 +9,8 @@ square_size = 50
 columns = WIDTH // square_size
 rows = HEIGHT // square_size
 sizes = [-1, 200, 100, 75, 50, 25]
+back_image = pg.image.load('fon.jpg')
+rect_im = back_image.get_rect(center=(600, 375))
 
 pg.init()
 
@@ -16,6 +18,7 @@ screen = pg.display.set_mode(SIZE)
 time = pg.time.Clock()
 x = 0
 y = 0
+
 
 class Cell:
     def __init__(self, x, y):
@@ -35,7 +38,7 @@ class Cell:
         y = self.y * square_size
 
         if self.visited:
-            pg.draw.rect(screen, 'green', (x, y, square_size, square_size))
+            pg.draw.rect(screen, (68, 118, 40), (x, y, square_size, square_size))
 
         if self.walls[0]:
             pg.draw.line(screen, 'black', [x, y], [x + square_size, y], 3)
@@ -75,7 +78,6 @@ class Cell:
         return choice(nei)
 
 
-
 def passage(now, next):
     x1 = now.x - next.x
     xx = now.x // square_size
@@ -110,26 +112,31 @@ input_text = pg.Rect(550, 300, 0, 200)
 game = False
 right_input = False
 final_input = 'NO'
-t1 = base_font2.render('', 1, ('white'))
-t2 = base_font2.render('', 1, ('white'))
+typing = False
+t1 = base_font2.render('', 1, ((68, 118, 40)))
+t2 = base_font2.render('', 1, ((68, 118, 40)))
 
 while running:
-    screen.fill(pg.Color('pink'))
+    screen.blit(back_image, rect_im)
 
     for i in pg.event.get():
         if i.type == pg.QUIT:
             exit()
         elif i.type == pg.KEYDOWN:
             if not game:
-                if ord(str(i.unicode)) == 8:
+
+                if i.key == pg.K_BACKSPACE:
                     usertext = usertext[:-1]
-                    t1 = base_font2.render('', 1, ('white'))
+                    t1 = base_font2.render('', 1, ((68, 118, 40)))
+                    typing = False
 
                 else:
-                    if ord(str(i.unicode)) >= 49 and ord(str(i.unicode)) <= 53 and len(usertext) <= 0:
+                    if ((i.key == pg.K_1 or i.key == pg.K_2 or i.key == pg.K_3 or i.key == pg.K_4 or i.key == pg.K_5)
+                            and len(usertext) <= 0):
                         usertext += i.unicode
-                        t1 = base_font2.render('нажмите ENTER', 1, ('white'))
-                    if ord(str(i.unicode)) == 13 and len(usertext) == 1:
+                        typing = True
+                        t1 = base_font2.render('нажмите ENTER', 1, ((68, 118, 40)))
+                    if i.key == pg.K_RETURN and len(usertext) == 1:
                         final_input = int(usertext)
                         game = True
                         square_size = sizes[final_input]
@@ -146,13 +153,24 @@ while running:
                 elif i.key == pg.K_DOWN and y + square_size * 2 <= HEIGHT and not q.walls[2]:
                     y += square_size
     if not game:
-        pg.draw.rect(screen, 'white', input_text, 5)
-        txt = base_font.render(usertext, True, 'black')
+        # pg.draw.rect(screen, 'white', input_text, 0)
+        if typing:
+            pg.draw.rect(screen, 'white', (370, 600, 450, 60), 0)
+            pg.draw.rect(screen, 'white', (input_text), 0)
+        txt = base_font.render(usertext, True, (68, 118, 40))
         screen.blit(txt, (input_text.x + 5, input_text.y + 5))
         input_text.w = 120
-        t = base_font2.render('введите уровень сложности от 1 до 5', 1, ('white'))
+
+        pg.draw.rect(screen, 'white', (50, 200, 1100, 60))
+        t = base_font2.render('введите уровень сложности от 1 до 5', 1, (68, 118, 40))
         screen.blit(t, (80, 200))
         screen.blit(t1, (370, 600))
+        lab = pg.image.load('надпись.PNG')
+        lab = pg.transform.scale(
+            lab, (lab.get_width() // 4,
+                  lab.get_height() // 4))
+        dog_rect = lab.get_rect(center=(600, 100))
+        screen.blit(lab, dog_rect)
     if game:
         if grid == []:
             for row in range(rows):
@@ -173,8 +191,8 @@ while running:
             cell_now = next_c
         elif queue:
             cell_now = queue.pop()
-        pg.draw.rect(screen, 'green', (2, 2, square_size - 2, square_size - 2))
-        pg.draw.rect(screen, 'red', (
+        pg.draw.rect(screen, (68, 118, 40), (2, 2, square_size - 2, square_size - 2))
+        pg.draw.rect(screen, (172, 22, 56), (
             (columns - 1) * square_size + 10, (rows - 1) * square_size + 10, square_size - 20, square_size - 20))
         pg.draw.rect(screen, 'black',
                      (x + square_size * 0.05, y + square_size * 0.05, square_size * 0.9, square_size * 0.9))
