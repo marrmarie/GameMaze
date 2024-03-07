@@ -21,7 +21,7 @@ x = 0
 y = 0
 
 
-class Cell:
+class Cell:  # класс, который рисует процесс создания лабиринта и стороны клеток
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -29,12 +29,12 @@ class Cell:
         self.walls = [True, True, True, True]
         self.visited = False
 
-    def fill_current(self):
+    def fill_current(self):  # рисует желтый квадратик, который создает лабиринт
         f1 = self.x * square_size
         f2 = self.y * square_size
-        pg.draw.rect(screen, 'black', [f1 + 2, f2 + 2, square_size - 2, square_size - 2])
+        pg.draw.rect(screen, (240,226,40), [f1 + 2, f2 + 2, square_size - 2, square_size - 2])
 
-    def draw_lines_and_cell(self):
+    def draw_lines_and_cell(self):  # рисует преграды в лабиринте
         x = self.x * square_size
         y = self.y * square_size
 
@@ -53,12 +53,12 @@ class Cell:
         if self.walls[3]:
             pg.draw.line(screen, 'black', [x, y + square_size], [x, y], 3)
 
-    def check(self, x, y):
+    def check(self, x, y):  # проверяет не вышли ли за границу поля
         if x < 0 or x > columns - 1 or y < 0 or y > rows - 1:
             return False
         return grid[x + y * columns]
 
-    def go(self):
+    def go(self):  # ищет соседей у каждой клетки и выбирает, где будут стены
         nei = []
         top = self.check(self.x, self.y - 1)
         right = self.check(self.x + 1, self.y)
@@ -78,7 +78,7 @@ class Cell:
         return choice(nei)
 
 
-def passage(now, next):
+def passage(now, next):  # функция, которая отмечает, где будет проход, а где стена
     x1 = now.x - next.x
     xx = now.x // square_size
     yy = now.y // square_size
@@ -117,15 +117,15 @@ t1 = base_font2.render('', 1, (GREEN))
 t2 = base_font2.render('', 1, (GREEN))
 final_scene = False
 
-while running:
+while running:  # основной игровой цикл
     screen.blit(back_image, rect_im)
 
-    for i in pg.event.get():
+    for i in pg.event.get():  # обработка событий
         if i.type == pg.QUIT:
             exit()
         if not final_scene:
             if i.type == pg.KEYDOWN:
-                if not game:
+                if not game:  # все под этим условием нужно для ввода уровня
                     if i.key == pg.K_BACKSPACE:
                         usertext = usertext[:-1]
                         t1 = base_font2.render('', 1, (GREEN))
@@ -146,7 +146,7 @@ while running:
                             square_size = sizes[final_input]
                             columns = WIDTH // square_size
                             rows = HEIGHT // square_size
-                else:
+                else:  # для передвижения черного квадратика во время прохождения лабиринта
                     q = grid[(x // square_size) + (y // square_size) * columns]
                     if i.key == pg.K_LEFT and x - square_size >= 0 and not q.walls[3]:
                         x -= square_size
@@ -158,8 +158,9 @@ while running:
                         y += square_size
                     if x == (columns - 1) * square_size and y == (rows - 1) * square_size:
                         final_scene = True
-        else:  # для финальной сцены
+        else:  # для финального изображения
             if i.type == pg.MOUSEBUTTONDOWN and 200 <= pg.mouse.get_pos()[0] <= 500 and 450 <= pg.mouse.get_pos()[1] <= 550:
+                # сброс параметров для продолжения игры
                 game = False
                 final_scene = False
                 typing = True
@@ -183,15 +184,16 @@ while running:
             elif i.type == pg.MOUSEBUTTONDOWN and 700 <= pg.mouse.get_pos()[0] <= 1000 and 450 <= pg.mouse.get_pos()[1] <= 550:
                 exit()
 
+    # все, что не связано с событиями
     if not final_scene:
         if not game:
+            # для ввода уровня
             if typing and len(usertext) == 1:
                 pg.draw.rect(screen, 'white', (370, 600, 450, 60), 0)
                 pg.draw.rect(screen, 'white', (input_text), 0)
             txt = base_font.render(usertext, True, GREEN)
             screen.blit(txt, (input_text.x + 5, input_text.y + 5))
             input_text.w = 120
-
             pg.draw.rect(screen, 'white', (50, 200, 1100, 60))
             t = base_font2.render('введите уровень сложности от 1 до 5', 1, GREEN)
             screen.blit(t, (80, 200))
@@ -203,6 +205,7 @@ while running:
             dog_rect = lab.get_rect(center=(600, 100))
             screen.blit(lab, dog_rect)
         if game:
+            # для генерации лабиринта и его прохождения
             if grid == []:
                 for row in range(rows):
                     for col in range(columns):
@@ -227,7 +230,7 @@ while running:
                 (columns - 1) * square_size + 10, (rows - 1) * square_size + 10, square_size - 20, square_size - 20))
             pg.draw.rect(screen, 'black',
                          (x + square_size * 0.05, y + square_size * 0.05, square_size * 0.9, square_size * 0.9))
-    else:
+    else:  # для финального кадра с кнопками и надписью
         pg.draw.rect(screen, 'white', (200, 450, 300, 100))
         pg.draw.rect(screen, 'white', (700, 450, 300, 100))
         f1 = base_font2.render('заново', 1, (GREEN))
