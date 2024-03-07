@@ -115,6 +115,7 @@ final_input = 'NO'
 typing = False
 t1 = base_font2.render('', 1, ((68, 118, 40)))
 t2 = base_font2.render('', 1, ((68, 118, 40)))
+final_scene = False
 
 while running:
     screen.blit(back_image, rect_im)
@@ -122,80 +123,114 @@ while running:
     for i in pg.event.get():
         if i.type == pg.QUIT:
             exit()
-        elif i.type == pg.KEYDOWN:
-            if not game:
+        if not final_scene:
+            if i.type == pg.KEYDOWN:
+                if not game:
+                    if i.key == pg.K_BACKSPACE:
+                        usertext = usertext[:-1]
+                        t1 = base_font2.render('', 1, ((68, 118, 40)))
+                        typing = False
 
-                if i.key == pg.K_BACKSPACE:
-                    usertext = usertext[:-1]
-                    t1 = base_font2.render('', 1, ((68, 118, 40)))
-                    typing = False
 
+                    else:
+                        if ((i.key == pg.K_1 or i.key == pg.K_2 or i.key == pg.K_3 or i.key == pg.K_4 or i.key == pg.K_5)
+                                and len(usertext) <= 0):
+                            usertext += i.unicode
+                            typing = True
+                            t1 = base_font2.render('нажмите ENTER', 1, ((68, 118, 40)))
+                        if i.key == pg.K_RETURN and len(usertext) == 1:
+                            final_input = int(usertext)
+                            game = True
+                            usertext = ''
+                            t1 = base_font2.render('', 1, ((68, 118, 40)))
+                            t = base_font2.render('', 1, ((68, 118, 40)))
+                            square_size = sizes[final_input]
+                            columns = WIDTH // square_size
+                            rows = HEIGHT // square_size
                 else:
-                    if ((i.key == pg.K_1 or i.key == pg.K_2 or i.key == pg.K_3 or i.key == pg.K_4 or i.key == pg.K_5)
-                            and len(usertext) <= 0):
-                        usertext += i.unicode
-                        typing = True
-                        t1 = base_font2.render('нажмите ENTER', 1, ((68, 118, 40)))
-                    if i.key == pg.K_RETURN and len(usertext) == 1:
-                        final_input = int(usertext)
-                        game = True
-                        square_size = sizes[final_input]
-                        columns = WIDTH // square_size
-                        rows = HEIGHT // square_size
-            else:
-                q = grid[(x // square_size) + (y // square_size) * columns]
-                if i.key == pg.K_LEFT and x - square_size >= 0 and not q.walls[3]:
-                    x -= square_size
-                elif i.key == pg.K_RIGHT and x + square_size * 2 <= WIDTH and not q.walls[1]:
-                    x += square_size
-                elif i.key == pg.K_UP and y - square_size >= 0 and not q.walls[0]:
-                    y -= square_size
-                elif i.key == pg.K_DOWN and y + square_size * 2 <= HEIGHT and not q.walls[2]:
-                    y += square_size
-    if not game:
-        # pg.draw.rect(screen, 'white', input_text, 0)
-        if typing:
-            pg.draw.rect(screen, 'white', (370, 600, 450, 60), 0)
-            pg.draw.rect(screen, 'white', (input_text), 0)
-        txt = base_font.render(usertext, True, (68, 118, 40))
-        screen.blit(txt, (input_text.x + 5, input_text.y + 5))
-        input_text.w = 120
+                    q = grid[(x // square_size) + (y // square_size) * columns]
+                    if i.key == pg.K_LEFT and x - square_size >= 0 and not q.walls[3]:
+                        x -= square_size
+                    elif i.key == pg.K_RIGHT and x + square_size * 2 <= WIDTH and not q.walls[1]:
+                        x += square_size
+                    elif i.key == pg.K_UP and y - square_size >= 0 and not q.walls[0]:
+                        y -= square_size
+                    elif i.key == pg.K_DOWN and y + square_size * 2 <= HEIGHT and not q.walls[2]:
+                        y += square_size
+                    if x == (columns - 1) * square_size and y == (rows - 1) * square_size:
+                        final_scene = True
+        else:  # для финальной сцены
+            if i.type == pg.MOUSEBUTTONDOWN and 200 <= pg.mouse.get_pos()[0] <= 500 and 450 <= pg.mouse.get_pos()[1] <= 550:
+                game = False
+                final_scene = False
+                typing = True
+                square_size = 50
+                columns = WIDTH // square_size
+                rows = HEIGHT // square_size
+                sizes = [-1, 200, 100, 75, 50, 25]
+                x = 0
+                y = 0
+            elif i.type == pg.MOUSEBUTTONDOWN and 700 <= pg.mouse.get_pos()[0] <= 1000 and 450 <= pg.mouse.get_pos()[1] <= 550:
+                exit()
 
-        pg.draw.rect(screen, 'white', (50, 200, 1100, 60))
-        t = base_font2.render('введите уровень сложности от 1 до 5', 1, (68, 118, 40))
-        screen.blit(t, (80, 200))
-        screen.blit(t1, (370, 600))
-        lab = pg.image.load('надпись.PNG')
-        lab = pg.transform.scale(
-            lab, (lab.get_width() // 4,
-                  lab.get_height() // 4))
-        dog_rect = lab.get_rect(center=(600, 100))
-        screen.blit(lab, dog_rect)
-    if game:
-        if grid == []:
-            for row in range(rows):
-                for col in range(columns):
-                    grid.append(Cell(col, row))
-            cell_now = grid[0]
-        for c in grid:
-            c.draw_lines_and_cell()
 
-        cell_now.visited = True
-        cell_now.fill_current()
+    if not final_scene:
+        if not game:
+            if typing and len(usertext) == 1:
+                pg.draw.rect(screen, 'white', (370, 600, 450, 60), 0)
+                pg.draw.rect(screen, 'white', (input_text), 0)
+            txt = base_font.render(usertext, True, (68, 118, 40))
+            screen.blit(txt, (input_text.x + 5, input_text.y + 5))
+            input_text.w = 120
 
-        next_c = cell_now.go()
-        if next_c:
-            next_c.visited = True
-            queue.append(cell_now)
-            passage(cell_now, next_c)
-            cell_now = next_c
-        elif queue:
-            cell_now = queue.pop()
-        pg.draw.rect(screen, (68, 118, 40), (2, 2, square_size - 2, square_size - 2))
-        pg.draw.rect(screen, (172, 22, 56), (
-            (columns - 1) * square_size + 10, (rows - 1) * square_size + 10, square_size - 20, square_size - 20))
-        pg.draw.rect(screen, 'black',
-                     (x + square_size * 0.05, y + square_size * 0.05, square_size * 0.9, square_size * 0.9))
+            pg.draw.rect(screen, 'white', (50, 200, 1100, 60))
+            t = base_font2.render('введите уровень сложности от 1 до 5', 1, (68, 118, 40))
+            screen.blit(t, (80, 200))
+            screen.blit(t1, (370, 600))
+            lab = pg.image.load('надпись.PNG')
+            lab = pg.transform.scale(
+                lab, (lab.get_width() // 4,
+                      lab.get_height() // 4))
+            dog_rect = lab.get_rect(center=(600, 100))
+            screen.blit(lab, dog_rect)
+        if game:
+            if grid == []:
+                for row in range(rows):
+                    for col in range(columns):
+                        grid.append(Cell(col, row))
+                cell_now = grid[0]
+            for c in grid:
+                c.draw_lines_and_cell()
+
+            cell_now.visited = True
+            cell_now.fill_current()
+
+            next_c = cell_now.go()
+            if next_c:
+                next_c.visited = True
+                queue.append(cell_now)
+                passage(cell_now, next_c)
+                cell_now = next_c
+            elif queue:
+                cell_now = queue.pop()
+            pg.draw.rect(screen, (68, 118, 40), (2, 2, square_size - 2, square_size - 2))
+            pg.draw.rect(screen, (172, 22, 56), (
+                (columns - 1) * square_size + 10, (rows - 1) * square_size + 10, square_size - 20, square_size - 20))
+            pg.draw.rect(screen, 'black',
+                         (x + square_size * 0.05, y + square_size * 0.05, square_size * 0.9, square_size * 0.9))
+    else:
+        pg.draw.rect(screen, 'white', (200, 450, 300, 100))
+        pg.draw.rect(screen, 'white', (700, 450, 300, 100))
+        f1 = base_font2.render('заново', 1, ((68, 118, 40)))
+        screen.blit(f1, (250, 475))
+        f1 = base_font2.render('выйти', 1, ((68, 118, 40)))
+        screen.blit(f1, (765, 475))
+        n1 = pg.image.load('надпись_финал.PNG')
+        n1 = pg.transform.scale(
+            n1, (n1.get_width() // 4.5,
+                  n1.get_height() // 4.5))
+        n1_rect = n1.get_rect(center=(600, 200))
+        screen.blit(n1, n1_rect)
 
     pg.display.flip()
     time.tick(100)
