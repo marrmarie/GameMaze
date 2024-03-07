@@ -9,7 +9,7 @@ square_size = 50
 columns = WIDTH // square_size
 rows = HEIGHT // square_size
 sizes = [-1, 200, 100, 75, 50, 25]
-back_image = pg.image.load('fon.jpg')
+back_image = pg.image.load('images/fon.jpg')
 rect_im = back_image.get_rect(center=(600, 375))
 GREEN = (68, 118, 40)
 
@@ -198,7 +198,7 @@ while running:  # основной игровой цикл
             t = base_font2.render('введите уровень сложности от 1 до 5', 1, GREEN)
             screen.blit(t, (80, 200))
             screen.blit(t1, (370, 600))
-            lab = pg.image.load('надпись.PNG')
+            lab = pg.image.load('images/надпись.PNG')
             lab = pg.transform.scale(
                 lab, (lab.get_width() // 4,
                       lab.get_height() // 4))
@@ -237,7 +237,7 @@ while running:  # основной игровой цикл
         screen.blit(f1, (250, 475))
         f1 = base_font2.render('выйти', 1, (GREEN))
         screen.blit(f1, (765, 475))
-        n1 = pg.image.load('надпись_финал.PNG')
+        n1 = pg.image.load('images/надпись_финал.PNG')
         n1 = pg.transform.scale(
             n1, (n1.get_width() // 4.5,
                  n1.get_height() // 4.5))
