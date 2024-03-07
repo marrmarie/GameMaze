@@ -170,6 +170,17 @@ while running:
                 sizes = [-1, 200, 100, 75, 50, 25]
                 x = 0
                 y = 0
+                grid = []
+                queue = deque()
+                running = True
+                usertext = ''
+                base_font = pg.font.Font(None, 300)
+                base_font2 = pg.font.Font(None, 80)
+                input_text = pg.Rect(550, 300, 0, 200)
+                right_input = False
+                final_input = 'NO'
+                t1 = base_font2.render('', 1, ((68, 118, 40)))
+                t2 = base_font2.render('', 1, ((68, 118, 40)))
             elif i.type == pg.MOUSEBUTTONDOWN and 700 <= pg.mouse.get_pos()[0] <= 1000 and 450 <= pg.mouse.get_pos()[1] <= 550:
                 exit()
 
